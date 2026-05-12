@@ -1,26 +1,14 @@
-```html id="q91zpw"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>FinancePro Ultimate</title>
+<title>FinancePro Dashboard</title>
 
-<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Chart -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Lucide -->
 <script src="https://unpkg.com/lucide@latest"></script>
-
-<!-- PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- Excel -->
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -28,9 +16,10 @@
 <style>
 
 :root{
-    --bg:#f1f5f9;
+    --bg:#f3f6fb;
     --card:#ffffff;
     --text:#0f172a;
+    --muted:#64748b;
     --border:#e2e8f0;
 }
 
@@ -38,6 +27,7 @@
     --bg:#020617;
     --card:#0f172a;
     --text:#f8fafc;
+    --muted:#94a3b8;
     --border:#1e293b;
 }
 
@@ -57,30 +47,7 @@ body{
 .glass-card{
     background:var(--card);
     border:1px solid var(--border);
-}
-
-.dark .glass-card{
-    background:#0f172a;
-    border-color:#1e293b;
-}
-
-.dark input,
-.dark select{
-    background:#0f172a;
-    color:white;
-    border-color:#334155;
-}
-
-.dark table{
-    color:white;
-}
-
-.dark th{
-    color:#cbd5e1;
-}
-
-.dark td{
-    color:#f8fafc;
+    backdrop-filter:blur(10px);
 }
 
 .sidebar-link{
@@ -88,7 +55,7 @@ body{
 }
 
 .sidebar-link:hover{
-    transform:translateX(4px);
+    transform:translateX(3px);
 }
 
 .modal{
@@ -105,10 +72,107 @@ body{
     display:none;
 }
 
+.fade{
+    animation:fade .25s ease;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.progress-bar{
+    transition:.4s;
+}
+
 </style>
 </head>
 
 <body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-6 bg-slate-950">
+
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-8 shadow-2xl fade">
+
+        <div class="text-center mb-8">
+
+            <div class="w-20 h-20 bg-indigo-600 rounded-3xl mx-auto flex items-center justify-center text-white mb-5">
+                <i data-lucide="wallet"></i>
+            </div>
+
+            <h1 class="text-4xl text-white font-bold">
+                FinancePro
+            </h1>
+
+            <p class="text-slate-400 mt-2">
+                Controle financeiro inteligente
+            </p>
+
+        </div>
+
+        <form id="loginForm" class="space-y-5">
+
+            <div>
+                <label class="text-slate-300 text-sm mb-2 block">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    required
+                    placeholder="admin@finance.com"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white"
+                />
+            </div>
+
+            <div>
+                <label class="text-slate-300 text-sm mb-2 block">
+                    Senha
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    required
+                    placeholder="123456"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-white"
+                />
+            </div>
+
+            <button
+                class="w-full bg-indigo-600 hover:bg-indigo-700 transition text-white py-4 rounded-xl font-semibold"
+            >
+                Entrar
+            </button>
+
+        </form>
+
+        <div class="mt-6 text-center text-slate-400 text-sm">
+            Login Demo:
+            <br>
+            admin@finance.com
+            <br>
+            senha: 123456
+        </div>
+
+        <p id="loginError" class="text-rose-400 text-center mt-4 hidden">
+            E-mail ou senha inválidos
+        </p>
+
+    </div>
+
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden fade">
 
 <div class="flex min-h-screen">
 
@@ -117,52 +181,44 @@ body{
 
     <div class="flex items-center gap-3 mb-10">
 
-        <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white">
+        <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white">
             <i data-lucide="wallet"></i>
         </div>
 
         <div>
-            <h1 class="font-bold text-3xl">
+            <h1 class="font-bold text-2xl">
                 FinancePro
             </h1>
 
-            <p class="text-slate-500 text-sm">
-                Sistema Financeiro
+            <p class="text-sm text-slate-500">
+                Dashboard Financeiro
             </p>
         </div>
 
     </div>
 
-    <nav class="space-y-3 flex-1">
+    <nav class="space-y-2 flex-1">
 
-        <button
-            onclick="showSection('dashboard')"
-            class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl bg-indigo-600 text-white"
-        >
+        <button onclick="showSection('dashboard')"
+        class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl bg-indigo-600 text-white">
             <i data-lucide="layout-dashboard"></i>
             Dashboard
         </button>
 
-        <button
-            onclick="showSection('transactions')"
-            class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800"
-        >
+        <button onclick="showSection('transactions')"
+        class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
             <i data-lucide="credit-card"></i>
             Transações
         </button>
 
-        <button
-            onclick="showSection('reports')"
-            class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800"
-        >
+        <button onclick="showSection('reports')"
+        class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
             <i data-lucide="pie-chart"></i>
             Relatórios
         </button>
 
-        <button
-            onclick="showSection('goals')"
-            class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800"
-        >
+        <button onclick="showSection('goals')"
+        class="sidebar-link w-full flex items-center gap-3 px-4 py-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800">
             <i data-lucide="target"></i>
             Metas
         </button>
@@ -179,10 +235,10 @@ body{
         </button>
 
         <button
-            onclick="openModal()"
-            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-semibold"
+            onclick="logout()"
+            class="w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl font-semibold"
         >
-            Nova Transação
+            Sair
         </button>
 
     </div>
@@ -195,17 +251,27 @@ body{
 <!-- DASHBOARD -->
 <div id="dashboardSection">
 
-<div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
 
     <div>
+
         <h2 class="text-4xl font-bold">
-            Olá, João 👋
+            Olá, <span id="username">João</span> 👋
         </h2>
 
         <p class="text-slate-500 mt-2">
-            Controle financeiro completo do casal
+            Aqui está seu resumo financeiro atualizado.
         </p>
+
     </div>
+
+    <button
+        onclick="openModal()"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-2xl flex items-center gap-2 font-semibold"
+    >
+        <i data-lucide="plus"></i>
+        Nova Transação
+    </button>
 
 </div>
 
@@ -254,31 +320,27 @@ body{
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
 
     <div class="glass-card p-6 rounded-3xl">
-
-        <h3 class="font-bold text-2xl mb-6">
+        <h3 class="font-bold text-xl mb-6">
             Fluxo Financeiro
         </h3>
 
         <canvas id="lineChart"></canvas>
-
     </div>
 
     <div class="glass-card p-6 rounded-3xl">
-
-        <h3 class="font-bold text-2xl mb-6">
+        <h3 class="font-bold text-xl mb-6">
             Gastos por Categoria
         </h3>
 
         <canvas id="pieChart"></canvas>
-
     </div>
 
 </div>
 
-<!-- TABELA -->
+<!-- TABLE -->
 <div class="glass-card rounded-3xl overflow-hidden">
 
-    <div class="p-6 border-b flex justify-between items-center">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
 
         <h3 class="font-bold text-2xl">
             Últimas Transações
@@ -286,7 +348,7 @@ body{
 
         <button
             onclick="clearTransactions()"
-            class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl"
+            class="text-rose-500 font-medium"
         >
             Limpar Tudo
         </button>
@@ -297,13 +359,13 @@ body{
 
         <table class="w-full">
 
-            <thead>
+            <thead class="border-b border-slate-200 dark:border-slate-800">
 
-                <tr class="text-slate-500 border-b">
+                <tr class="text-slate-500">
 
-                    <th class="text-left p-5">Pessoa</th>
                     <th class="text-left p-5">Descrição</th>
                     <th class="text-left p-5">Categoria</th>
+                    <th class="text-left p-5">Data</th>
                     <th class="text-left p-5">Valor</th>
 
                 </tr>
@@ -325,42 +387,9 @@ body{
 
     <div class="glass-card p-6 rounded-3xl">
 
-        <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
-
-            <h2 class="text-3xl font-bold">
-                Todas as Transações
-            </h2>
-
-            <div class="flex gap-3 flex-wrap">
-
-                <select
-                    id="filterOwner"
-                    onchange="renderAllTransactions()"
-                    class="px-4 py-3 rounded-2xl border bg-transparent"
-                >
-                    <option value="Todos">Todos</option>
-                    <option value="João">João</option>
-                    <option value="Maria">Maria</option>
-                    <option value="Coletivo">Coletivo</option>
-                </select>
-
-                <button
-                    onclick="exportPDF()"
-                    class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-3 rounded-2xl"
-                >
-                    Exportar PDF
-                </button>
-
-                <button
-                    onclick="exportExcel()"
-                    class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-2xl"
-                >
-                    Exportar Excel
-                </button>
-
-            </div>
-
-        </div>
+        <h2 class="text-3xl font-bold mb-6">
+            Todas as Transações
+        </h2>
 
         <div id="allTransactions" class="space-y-4"></div>
 
@@ -374,7 +403,6 @@ body{
     <div class="grid md:grid-cols-2 gap-6">
 
         <div class="glass-card p-6 rounded-3xl">
-
             <h3 class="text-2xl font-bold mb-6">
                 Resumo Financeiro
             </h3>
@@ -392,7 +420,7 @@ body{
         <div class="glass-card p-6 rounded-3xl">
 
             <h3 class="text-2xl font-bold mb-6">
-                Categoria com Maior Gasto
+                Maior Categoria de Gasto
             </h3>
 
             <p id="topCategory" class="text-2xl font-bold text-rose-500"></p>
@@ -408,7 +436,7 @@ body{
 
     <div class="glass-card p-6 rounded-3xl">
 
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-8">
 
             <h2 class="text-3xl font-bold">
                 Metas Financeiras
@@ -431,11 +459,12 @@ body{
 
 </main>
 </div>
+</div>
 
 <!-- MODAL -->
 <div id="modal" class="modal hidden">
 
-<div class="glass-card p-8 rounded-3xl w-full max-w-md">
+<div class="glass-card p-8 rounded-3xl w-full max-w-md fade">
 
     <div class="flex justify-between items-center mb-6">
 
@@ -444,21 +473,12 @@ body{
         </h2>
 
         <button onclick="closeModal()">
-            ✖
+            <i data-lucide="x"></i>
         </button>
 
     </div>
 
     <form id="transactionForm" class="space-y-5">
-
-        <select
-            id="owner"
-            class="w-full px-4 py-4 rounded-2xl border bg-transparent"
-        >
-            <option value="João">João</option>
-            <option value="Maria">Maria</option>
-            <option value="Coletivo">Coletivo</option>
-        </select>
 
         <input
             type="text"
@@ -511,17 +531,85 @@ body{
     </form>
 
 </div>
+
 </div>
 
 <script>
 
 lucide.createIcons();
 
-let transactions =
-    JSON.parse(localStorage.getItem("transactions")) || [];
+const loginForm = document.getElementById("loginForm");
+const loginScreen = document.getElementById("loginScreen");
+const app = document.getElementById("app");
+const loginError = document.getElementById("loginError");
 
-let goals =
-    JSON.parse(localStorage.getItem("goals")) || [];
+let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+let goals = JSON.parse(localStorage.getItem("goals")) || [];
+
+const users = [
+    {
+        email:"admin@finance.com",
+        password:"123456",
+        name:"João"
+    }
+];
+
+loginForm.addEventListener("submit",(e)=>{
+
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const user = users.find(
+        u => u.email === email && u.password === password
+    );
+
+    if(user){
+
+        localStorage.setItem("logged","true");
+        localStorage.setItem("user",user.name);
+
+        loginScreen.classList.add("hidden");
+        app.classList.remove("hidden");
+
+        document.getElementById("username").innerText = user.name;
+
+        initializeApp();
+
+    }else{
+        loginError.classList.remove("hidden");
+    }
+
+});
+
+function initializeApp(){
+
+    renderTransactions();
+    updateDashboard();
+    updateCharts();
+    renderGoals();
+
+}
+
+function logout(){
+
+    localStorage.removeItem("logged");
+    location.reload();
+
+}
+
+if(localStorage.getItem("logged")){
+
+    loginScreen.classList.add("hidden");
+    app.classList.remove("hidden");
+
+    document.getElementById("username").innerText =
+        localStorage.getItem("user");
+
+    initializeApp();
+
+}
 
 function toggleDarkMode(){
 
@@ -552,24 +640,19 @@ document
 
     e.preventDefault();
 
-    const amount = parseFloat(
-        document
+    const amountValue = document
         .getElementById("amount")
         .value
-        .replace(",", ".")
-    );
+        .replace(",", ".");
+
+    const amount = parseFloat(amountValue);
 
     if(isNaN(amount)){
-        alert("Digite um valor válido");
+        alert("Digite um valor válido.");
         return;
     }
 
     const transaction = {
-
-        id: Date.now(),
-
-        owner:
-            document.getElementById("owner").value,
 
         description:
             document.getElementById("description").value,
@@ -580,7 +663,7 @@ document
         type:
             document.getElementById("type").value,
 
-        amount,
+        amount: amount,
 
         date:
             new Date().toLocaleDateString("pt-BR")
@@ -589,40 +672,21 @@ document
 
     transactions.unshift(transaction);
 
-    saveData();
+    localStorage.setItem(
+        "transactions",
+        JSON.stringify(transactions)
+    );
 
-    renderAll();
+    renderTransactions();
+    updateDashboard();
+    updateCharts();
+    renderGoals();
 
     closeModal();
 
     e.target.reset();
 
 });
-
-function saveData(){
-
-    localStorage.setItem(
-        "transactions",
-        JSON.stringify(transactions)
-    );
-
-    localStorage.setItem(
-        "goals",
-        JSON.stringify(goals)
-    );
-
-}
-
-function renderAll(){
-
-    renderTransactions();
-    renderAllTransactions();
-    updateDashboard();
-    updateCharts();
-    renderReports();
-    renderGoals();
-
-}
 
 function renderTransactions(){
 
@@ -631,15 +695,11 @@ function renderTransactions(){
 
     table.innerHTML = "";
 
-    transactions.slice(0,5).forEach(t=>{
+    transactions.forEach((t)=>{
 
         table.innerHTML += `
 
-        <tr class="border-b">
-
-            <td class="p-5">
-                ${t.owner}
-            </td>
+        <tr class="border-b border-slate-200 dark:border-slate-800">
 
             <td class="p-5 font-medium">
                 ${t.description}
@@ -647,6 +707,10 @@ function renderTransactions(){
 
             <td class="p-5">
                 ${t.category}
+            </td>
+
+            <td class="p-5">
+                ${t.date}
             </td>
 
             <td class="p-5 font-bold ${
@@ -673,170 +737,12 @@ function renderTransactions(){
 
 }
 
-function renderAllTransactions(){
-
-    const container =
-        document.getElementById("allTransactions");
-
-    const filter =
-        document.getElementById("filterOwner").value;
-
-    container.innerHTML = "";
-
-    const filtered =
-        transactions.filter(t => {
-
-            if(filter === "Todos"){
-                return true;
-            }
-
-            return t.owner === filter;
-
-        });
-
-    if(filtered.length === 0){
-
-        container.innerHTML = `
-            <p class="text-slate-500">
-                Nenhuma transação encontrada.
-            </p>
-        `;
-
-        return;
-
-    }
-
-    filtered.forEach((t,index)=>{
-
-        container.innerHTML += `
-
-        <div class="border p-5 rounded-2xl">
-
-            <div class="flex justify-between gap-4 flex-wrap">
-
-                <div>
-
-                    <div class="flex items-center gap-2 mb-2">
-
-                        <span class="font-bold text-lg">
-                            ${t.description}
-                        </span>
-
-                        <span class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">
-                            ${t.owner}
-                        </span>
-
-                    </div>
-
-                    <p class="text-slate-500">
-                        ${t.category}
-                    </p>
-
-                    <p class="text-slate-500 text-sm mt-1">
-                        ${t.date}
-                    </p>
-
-                </div>
-
-                <div class="text-right">
-
-                    <p class="${
-                        t.type === "income"
-                        ? "text-emerald-500"
-                        : "text-rose-500"
-                    } font-bold text-xl">
-
-                        ${
-                            t.type === "income"
-                            ? "+"
-                            : "-"
-                        }
-
-                        ${formatCurrency(t.amount)}
-
-                    </p>
-
-                    <div class="flex gap-2 mt-4">
-
-                        <button
-                            onclick="editTransaction(${index})"
-                            class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl"
-                        >
-                            Editar
-                        </button>
-
-                        <button
-                            onclick="deleteTransaction(${index})"
-                            class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl"
-                        >
-                            Excluir
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-function editTransaction(index){
-
-    const transaction = transactions[index];
-
-    const description = prompt(
-        "Descrição:",
-        transaction.description
-    );
-
-    if(!description) return;
-
-    const amount = prompt(
-        "Valor:",
-        transaction.amount
-    );
-
-    if(!amount) return;
-
-    transaction.description = description;
-
-    transaction.amount =
-        parseFloat(
-            amount.replace(",", ".")
-        );
-
-    saveData();
-
-    renderAll();
-
-}
-
-function deleteTransaction(index){
-
-    if(confirm("Excluir transação?")){
-
-        transactions.splice(index,1);
-
-        saveData();
-
-        renderAll();
-
-    }
-
-}
-
 function updateDashboard(){
 
     let income = 0;
     let expense = 0;
 
-    transactions.forEach(t=>{
+    transactions.forEach((t)=>{
 
         if(t.type === "income"){
             income += t.amount;
@@ -868,24 +774,51 @@ function formatCurrency(value){
 
 }
 
+function clearTransactions(){
+
+    if(confirm("Deseja apagar todas as transações?")){
+
+        transactions = [];
+
+        localStorage.removeItem("transactions");
+
+        renderTransactions();
+        updateDashboard();
+        updateCharts();
+        renderGoals();
+
+    }
+
+}
+
 let lineChart;
 let pieChart;
 
 function updateCharts(){
 
+    const incomeData = transactions
+        .filter(t => t.type === "income")
+        .map(t => t.amount);
+
+    const expenseData = transactions
+        .filter(t => t.type === "expense")
+        .map(t => t.amount);
+
     const categories = {};
 
-    transactions.forEach(t=>{
+    transactions.forEach((t)=>{
 
         if(t.type === "expense"){
 
             categories[t.category] =
-                (categories[t.category] || 0)
-                + t.amount;
+                (categories[t.category] || 0) + t.amount;
 
         }
 
     });
+
+    const labels = Object.keys(categories);
+    const values = Object.values(categories);
 
     if(lineChart){
         lineChart.destroy();
@@ -901,14 +834,23 @@ function updateCharts(){
             type:"line",
 
             data:{
-                labels:transactions.map((_,i)=> i+1),
+                labels:transactions.map((_,i)=> i + 1),
 
                 datasets:[
                     {
-                        label:"Valores",
-                        data:transactions.map(t=>t.amount),
+                        label:"Entradas",
+                        data:incomeData,
                         borderColor:"#6366f1",
                         backgroundColor:"rgba(99,102,241,.1)",
+                        fill:true,
+                        tension:.4
+                    },
+
+                    {
+                        label:"Saídas",
+                        data:expenseData,
+                        borderColor:"#f43f5e",
+                        backgroundColor:"rgba(244,63,94,.1)",
                         fill:true,
                         tension:.4
                     }
@@ -923,11 +865,11 @@ function updateCharts(){
             type:"doughnut",
 
             data:{
-                labels:Object.keys(categories),
+                labels:labels,
 
                 datasets:[
                     {
-                        data:Object.values(categories),
+                        data:values,
 
                         backgroundColor:[
                             "#6366f1",
@@ -936,13 +878,156 @@ function updateCharts(){
                             "#f43f5e",
                             "#06b6d4",
                             "#8b5cf6",
-                            "#14b8a6"
+                            "#14b8a6",
+                            "#eab308"
                         ]
                     }
                 ]
             }
         }
     );
+
+}
+
+function showSection(section){
+
+    document.getElementById("dashboardSection")
+        .classList.add("hidden");
+
+    document.getElementById("transactionsSection")
+        .classList.add("hidden");
+
+    document.getElementById("reportsSection")
+        .classList.add("hidden");
+
+    document.getElementById("goalsSection")
+        .classList.add("hidden");
+
+    if(section === "dashboard"){
+        document.getElementById("dashboardSection")
+            .classList.remove("hidden");
+    }
+
+    if(section === "transactions"){
+
+        document.getElementById("transactionsSection")
+            .classList.remove("hidden");
+
+        renderAllTransactions();
+
+    }
+
+    if(section === "reports"){
+
+        document.getElementById("reportsSection")
+            .classList.remove("hidden");
+
+        renderReports();
+
+    }
+
+    if(section === "goals"){
+
+        document.getElementById("goalsSection")
+            .classList.remove("hidden");
+
+        renderGoals();
+
+    }
+
+}
+
+function renderAllTransactions(){
+
+    const container =
+        document.getElementById("allTransactions");
+
+    container.innerHTML = "";
+
+    if(transactions.length === 0){
+
+        container.innerHTML = `
+            <p class="text-slate-500">
+                Nenhuma transação cadastrada.
+            </p>
+        `;
+
+        return;
+
+    }
+
+    transactions.forEach((t,index)=>{
+
+        container.innerHTML += `
+
+        <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-2xl flex justify-between items-center">
+
+            <div>
+
+                <p class="font-bold text-lg">
+                    ${t.description}
+                </p>
+
+                <p class="text-slate-500">
+                    ${t.category} • ${t.date}
+                </p>
+
+            </div>
+
+            <div class="flex items-center gap-4">
+
+                <span class="${
+                    t.type === "income"
+                    ? "text-emerald-500"
+                    : "text-rose-500"
+                } font-bold text-lg">
+
+                    ${
+                        t.type === "income"
+                        ? "+"
+                        : "-"
+                    }
+
+                    ${formatCurrency(t.amount)}
+
+                </span>
+
+                <button
+                    onclick="deleteTransaction(${index})"
+                    class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl"
+                >
+                    Excluir
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+function deleteTransaction(index){
+
+    if(confirm("Excluir esta transação?")){
+
+        transactions.splice(index,1);
+
+        localStorage.setItem(
+            "transactions",
+            JSON.stringify(transactions)
+        );
+
+        renderTransactions();
+        renderAllTransactions();
+        updateDashboard();
+        updateCharts();
+        renderReports();
+        renderGoals();
+
+    }
 
 }
 
@@ -956,7 +1041,9 @@ function renderReports(){
     transactions.forEach(t=>{
 
         if(t.type === "income"){
+
             income += t.amount;
+
         }else{
 
             expense += t.amount;
@@ -969,17 +1056,25 @@ function renderReports(){
 
     });
 
+    const balance = income - expense;
+
     document.getElementById("reportIncome")
         .innerHTML =
-        `Entradas: <strong>${formatCurrency(income)}</strong>`;
+        "Entradas: <strong>" +
+        formatCurrency(income) +
+        "</strong>";
 
     document.getElementById("reportExpense")
         .innerHTML =
-        `Saídas: <strong>${formatCurrency(expense)}</strong>`;
+        "Saídas: <strong>" +
+        formatCurrency(expense) +
+        "</strong>";
 
     document.getElementById("reportBalance")
         .innerHTML =
-        `Saldo: <strong>${formatCurrency(income-expense)}</strong>`;
+        "Saldo Atual: <strong>" +
+        formatCurrency(balance) +
+        "</strong>";
 
     let top = "";
     let max = 0;
@@ -999,7 +1094,7 @@ function renderReports(){
         .innerHTML =
         top
         ? `${top} (${formatCurrency(max)})`
-        : "Nenhum gasto";
+        : "Nenhum gasto ainda";
 
 }
 
@@ -1012,16 +1107,16 @@ function addGoal(){
     if(!target) return;
 
     goals.push({
-
         title,
-
         target: parseFloat(
             target.replace(",", ".")
         )
-
     });
 
-    saveData();
+    localStorage.setItem(
+        "goals",
+        JSON.stringify(goals)
+    );
 
     renderGoals();
 
@@ -1064,7 +1159,7 @@ function renderGoals(){
 
         list.innerHTML += `
 
-        <div class="border p-5 rounded-2xl">
+        <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-2xl">
 
             <div class="flex justify-between items-center mb-4">
 
@@ -1075,6 +1170,7 @@ function renderGoals(){
                     </h4>
 
                     <p class="text-slate-500">
+                        Meta:
                         ${formatCurrency(goal.target)}
                     </p>
 
@@ -1092,7 +1188,7 @@ function renderGoals(){
             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 overflow-hidden">
 
                 <div
-                    class="bg-indigo-600 h-4"
+                    class="bg-indigo-600 h-4 progress-bar"
                     style="width:${progress}%"
                 ></div>
 
@@ -1112,11 +1208,14 @@ function renderGoals(){
 
 function deleteGoal(index){
 
-    if(confirm("Excluir meta?")){
+    if(confirm("Excluir esta meta?")){
 
         goals.splice(index,1);
 
-        saveData();
+        localStorage.setItem(
+            "goals",
+            JSON.stringify(goals)
+        );
 
         renderGoals();
 
@@ -1124,115 +1223,12 @@ function deleteGoal(index){
 
 }
 
-function exportPDF(){
-
-    const { jsPDF } = window.jspdf;
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(20);
-
-    doc.text(
-        "FinancePro - Relatório Financeiro",
-        20,
-        20
-    );
-
-    let y = 40;
-
-    transactions.forEach(t=>{
-
-        doc.setFontSize(12);
-
-        doc.text(
-            `${t.owner} | ${t.description} | ${formatCurrency(t.amount)}`,
-            20,
-            y
-        );
-
-        y += 10;
-
-    });
-
-    doc.save("financepro.pdf");
-
-}
-
-function exportExcel(){
-
-    const worksheet =
-        XLSX.utils.json_to_sheet(transactions);
-
-    const workbook =
-        XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        "Transacoes"
-    );
-
-    XLSX.writeFile(
-        workbook,
-        "financepro.xlsx"
-    );
-
-}
-
-function clearTransactions(){
-
-    if(confirm("Apagar tudo?")){
-
-        transactions = [];
-
-        saveData();
-
-        renderAll();
-
-    }
-
-}
-
-function showSection(section){
-
-    document.getElementById("dashboardSection")
-        .classList.add("hidden");
-
-    document.getElementById("transactionsSection")
-        .classList.add("hidden");
-
-    document.getElementById("reportsSection")
-        .classList.add("hidden");
-
-    document.getElementById("goalsSection")
-        .classList.add("hidden");
-
-    if(section === "dashboard"){
-        document.getElementById("dashboardSection")
-            .classList.remove("hidden");
-    }
-
-    if(section === "transactions"){
-        document.getElementById("transactionsSection")
-            .classList.remove("hidden");
-    }
-
-    if(section === "reports"){
-        document.getElementById("reportsSection")
-            .classList.remove("hidden");
-    }
-
-    if(section === "goals"){
-        document.getElementById("goalsSection")
-            .classList.remove("hidden");
-    }
-
-}
-
-renderAll();
+renderTransactions();
+updateDashboard();
+updateCharts();
+renderGoals();
 
 </script>
 
 </body>
 </html>
-```
